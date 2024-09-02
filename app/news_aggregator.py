@@ -59,7 +59,7 @@ def fetch_and_store_articles():
 
             # Check if any keyword is present in the title or description
             found_keywords = [keyword for keyword in keywords if keyword in title or keyword in description]
-            
+
             # Avoid inserting duplicates based on link
             if not Article.query.filter(func.lower(Article.link) == func.lower(link)).first():
                 article = Article(
@@ -70,7 +70,7 @@ def fetch_and_store_articles():
                     author=author,
                     published_at=published_at,
                     link=link,
-                    keywords=found_keywords,
+                    keywords=found_keywords,  # Store found keywords
                     raw_data=entry
                 )
                 db.session.add(article)

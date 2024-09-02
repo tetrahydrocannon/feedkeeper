@@ -3,7 +3,10 @@ from app import db, bcrypt
 from app.models import User, Article
 from app.forms import RegistrationForm, LoginForm
 from flask_login import login_user, current_user, logout_user, login_required
-from app.news_aggregator import fetch_and_store_articles, feeds, keywords  # Import the function, feeds, and keywords
+from app.news_aggregator import fetch_and_store_articles, feeds, keywords
+from sqlalchemy import cast
+from sqlalchemy.dialects.postgresql import ARRAY
+from sqlalchemy.types import Text
 
 main = Blueprint('main', __name__)
 
@@ -49,21 +52,40 @@ def logout():
 @main.route("/news_feed", methods=['GET', 'POST'])
 @login_required
 def news_feed():
-    if request.method == 'POST':
-        selected_feed = request.form.get('feed')
-        selected_topic = request.form.get('topic')
+    selected_feeds = []
+    selected_keywords = []
 
-        # Filter articles based on selected feed and topic
+    if request.method == 'POST':
+        # Capture the selected feeds and keywords from the form
+        selected_feeds = request.form.getlist('feed')
+        selected_keywords = request.form.getlist('keyword')
+
+        # Start filtering the articles
         articles = Article.query
-        if selected_feed:
-            articles = articles.filter(Article.feed_url == selected_feed)
-        if selected_topic:
-            articles = articles.filter(Article.keywords.any(selected_topic))
+
+        if selected_feeds:
+            articles = articles.filter(Article.feed_url.in_(selected_feeds))
+
+        if selected_keywords:
+            # Correctly filter with overlap using Text type casting
+            articles = articles.filter(
+                Article.keywords.overlap(cast(selected_keywords, ARRAY(Text)))
+            )
+
         articles = articles.order_by(Article.published_at.desc()).all()
+
     else:
         articles = Article.query.order_by(Article.published_at.desc()).all()
 
-    return render_template('news_feed.html', articles=articles, feeds=feeds, keywords=keywords)
+    # Pass selected feeds and keywords back to the template
+    return render_template(
+        'news_feed.html',
+        articles=articles,
+        feeds=feeds,
+        keywords=keywords,
+        selected_feeds=selected_feeds,
+        selected_keywords=selected_keywords
+    )
 
 @main.route("/fetch_articles")
 @login_required
