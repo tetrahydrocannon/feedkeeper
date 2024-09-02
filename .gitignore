@@ -108,3 +108,5 @@ migrations/
 
 # MacOS-specific files
 .DS_Store
+
+combined_file.txt
