@@ -8,21 +8,19 @@
     <form method="post">
         <div class="form-group">
             <label for="feed">Select Source</label>
-            <select class="form-control selectpicker" id="feed" name="feed" multiple>
+            <select class="form-control" id="feed" name="feed">
+                <option value="">All</option>
                 {% for feed in feeds %}
-                    <option value="{{ feed }}" {% if feed in selected_feeds %}selected{% endif %}>
-                        {{ feed }}
-                    </option>
+                <option value="{{ feed }}" {% if feed in selected_feeds %}selected{% endif %}>{{ feed }}</option>
                 {% endfor %}
             </select>
         </div>
         <div class="form-group">
             <label for="topic">Select Topic</label>
-            <select class="form-control selectpicker" id="topic" name="keyword" multiple>
+            <select class="form-control" id="topic" name="topic">
+                <option value="">All</option>
                 {% for keyword in keywords %}
-                    <option value="{{ keyword }}" {% if keyword in selected_keywords %}selected{% endif %}>
-                        {{ keyword }}
-                    </option>
+                <option value="{{ keyword }}" {% if keyword in selected_keywords %}selected{% endif %}>{{ keyword }}</option>
                 {% endfor %}
             </select>
         </div>
@@ -33,10 +31,17 @@
     <div class="card mb-4">
         <div class="card-body">
             <h5 class="card-title">{{ article.title }}</h5>
-            <h6 class="card-subtitle mb-2 text-muted">{{ article.author }} - {{ article.published_at.strftime('%Y-%m-%d %H:%M:%S') }}</h6>
-            <p class="card-text">{{ article.description }}</p>
-            <p><strong>Source:</strong> {{ article.feed_url }}</p>
-            <p><strong>Keywords:</strong> {{ article.keywords | join(', ') }}</p>
+            <h6 class="card-subtitle mb-2 text-muted">
+                {{ article.author }} - {{ article.published_at.strftime('%Y-%m-%d %H:%M:%S') }}<br>
+                <strong>Source:</strong> {{ article.feed_url }}<br>
+                <strong>Keywords:</strong> {{ article.keywords | join(', ') }}
+            </h6>
+            {% if article.description %}
+                <p class="card-text">{{ article.description | safe }}</p>
+            {% endif %}
+            {% if article.content %}
+                <div class="card-text">{{ article.content | safe }}</div>
+            {% endif %}
             <a href="{{ article.link }}" class="card-link">Read more</a>
         </div>
     </div>

@@ -1,0 +1,16 @@
+.image-container {
+    width: 100%;
+    max-height: 400px;  /* You can adjust this height based on your design */
+    overflow: hidden;   /* Hide any overflow content */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.image-container img {
+    width: 100%;
+    height: auto;      /* Maintain the aspect ratio */
+    max-width: 100%;   /* Ensure the image does not exceed the width of the container */
+    max-height: 400px; /* Adjust to ensure image does not exceed a certain height */
+    object-fit: cover; /* Cover the entire area of the container */
+}
