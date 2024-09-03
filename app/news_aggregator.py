@@ -3,6 +3,7 @@ from app import db
 from app.models import Article
 from datetime import datetime
 from sqlalchemy import func
+import bleach
 
 # List of RSS feed URLs
 feeds = [
@@ -57,8 +58,20 @@ def fetch_and_store_articles():
             if published_at:
                 published_at = datetime(*entry.published_parsed[:6])
 
-            # Sanitize HTML content
-            sanitized_content = bleach.clean(content, tags=['p', 'b', 'i', 'u', 'a', 'br', 'img'], attributes={'a': ['href'], 'img': ['src', 'alt', 'style']}, strip=True)
+            # Sanitize HTML content for both content and description
+            sanitized_content = bleach.clean(
+                content,
+                tags=['p', 'b', 'i', 'u', 'a', 'br', 'img'],
+                attributes={'a': ['href'], 'img': ['src', 'alt', 'style']},
+                strip=True
+            )
+
+            sanitized_description = bleach.clean(
+                description,
+                tags=['p', 'b', 'i', 'u', 'a', 'br', 'img'],
+                attributes={'a': ['href'], 'img': ['src', 'alt', 'style']},
+                strip=True
+            )
 
             # Check if any keyword is present in the title or description
             found_keywords = [keyword for keyword in keywords if keyword in title or keyword in description]
@@ -68,7 +81,7 @@ def fetch_and_store_articles():
                 article = Article(
                     feed_url=feed_url,
                     title=title,
-                    description=description,
+                    description=sanitized_description,  # Use sanitized description here
                     content=sanitized_content,
                     author=author,
                     published_at=published_at,
