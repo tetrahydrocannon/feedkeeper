@@ -57,21 +57,25 @@ def fetch_and_store_articles():
             if published_at:
                 published_at = datetime(*entry.published_parsed[:6])
 
+            # Sanitize HTML content
+            sanitized_content = bleach.clean(content, tags=['p', 'b', 'i', 'u', 'a', 'br', 'img'], attributes={'a': ['href'], 'img': ['src', 'alt', 'style']}, strip=True)
+
             # Check if any keyword is present in the title or description
             found_keywords = [keyword for keyword in keywords if keyword in title or keyword in description]
-
+            
             # Avoid inserting duplicates based on link
             if not Article.query.filter(func.lower(Article.link) == func.lower(link)).first():
                 article = Article(
                     feed_url=feed_url,
                     title=title,
                     description=description,
-                    content=content,
+                    content=sanitized_content,
                     author=author,
                     published_at=published_at,
                     link=link,
-                    keywords=found_keywords,  # Store found keywords
+                    keywords=found_keywords,
                     raw_data=entry
                 )
                 db.session.add(article)
                 db.session.commit()
+
