@@ -69,8 +69,16 @@ def fetch_and_store_articles():
             sanitized_description = bleach.clean(
                 description,
                 tags=['p', 'b', 'i', 'u', 'a', 'br', 'img'],
-                attributes={'a': ['href'], 'img': ['src', 'alt', 'style']},
+                attributes={
+                    'a': ['href'],
+                    'img': ['src', 'alt', 'style', 'class'],  # Allow class attribute
+                },
                 strip=True
+            )
+
+            # Add inline CSS with !important for controlling the image size and alignment
+            sanitized_description = sanitized_description.replace(
+                '<img ', '<img style="max-width: 100% !important; height: auto !important; float: left !important; margin-right: 10px !important;" '
             )
 
             # Check if any keyword is present in the title or description
@@ -81,7 +89,7 @@ def fetch_and_store_articles():
                 article = Article(
                     feed_url=feed_url,
                     title=title,
-                    description=sanitized_description,  # Use sanitized description here
+                    description=sanitized_description,
                     content=sanitized_content,
                     author=author,
                     published_at=published_at,

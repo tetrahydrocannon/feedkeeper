@@ -34,7 +34,9 @@
         <div class="card-body">
             <h5 class="card-title">{{ article.title }}</h5>
             <h6 class="card-subtitle mb-2 text-muted">{{ article.author }} - {{ article.published_at.strftime('%Y-%m-%d %H:%M:%S') }}</h6>
-            <p class="card-text">{{ article.description | safe }}</p>
+            <div class="image-container">
+                {{ article.description | safe }}
+            </div>
             <p><strong>Source:</strong> {{ article.feed_url }}</p>
             <p><strong>Keywords:</strong> {{ article.keywords | join(', ') }}</p>
             <a href="{{ article.link }}" class="card-link">Read more</a>

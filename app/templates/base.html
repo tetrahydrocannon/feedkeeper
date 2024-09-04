@@ -7,6 +7,27 @@
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <!-- Include Bootstrap Select CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.14/css/bootstrap-select.min.css" rel="stylesheet">
+    <style>
+        .description-image {
+            max-width: 100% !important;  /* Ensure the image fits within the width of its container */
+            height: auto !important;     /* Maintain the original aspect ratio */
+            float: left !important;      /* Align the image to the left */
+            margin-right: 10px !important; /* Add space between the image and the text */
+            display: block !important;   /* Ensure the image behaves like a block element */
+        }
+        .image-container {
+            max-width: 100%;  /* Ensure the container fits within the card */
+            overflow: hidden; /* Prevent overflow issues */
+        }
+
+        .image-container img {
+            max-width: 100% !important;
+            height: auto !important;
+            display: block;   /* Ensures the image behaves as a block element */
+            margin-right: 10px;
+            float: left;
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
